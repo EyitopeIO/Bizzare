@@ -1,0 +1,8 @@
+# Bizzare
+Given a device (IP address) on a network, predict how much bandwidth it needs
+
+# How Bizzare does its thing
+
+- Get IP address from user
+- Within a time period, sum the bytes it has sent and received
+- Train model with data and save it in SQL database 

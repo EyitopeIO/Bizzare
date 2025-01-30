@@ -1,0 +1,33 @@
+#!/bin/bash
+
+
+while :; do
+    case $1 in
+        -h|--help)
+            exit
+            ;;
+        -d|--debug)
+            export DEBUG=y
+            shift
+            ;;
+        -c)
+            DO_CLEAN=y
+            shift
+            ;;
+        *)               # Default case: If no more options then break out of the loop.
+            break
+    esac
+
+    shift
+done
+
+if [ -n "$DO_CLEAN" ]; then
+    rm -rf cbuild bizzare
+    exit
+fi
+
+mkdir -p cbuild
+pushd cbuild
+cmake ../
+make
+popd
