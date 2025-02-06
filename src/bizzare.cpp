@@ -1,7 +1,10 @@
 #include <unistd.h>
 #include <iostream>
 #include <cstdlib>
+#include <cstdio>
 #include <string>
+#include <thread>
+#include <csignal>
 #include "helpers.h"
 #include "network.h"
 
@@ -15,6 +18,15 @@ static void show_help(void)
     std::exit(EXIT_FAILURE);
 }
 
+extern struct nfct_handle *g_handle;
+
+static void sigint_handler(int sig) {
+    show_info("Shutting down");
+    nfct_close(g_handle);
+    std::exit(EXIT_SUCCESS);
+}
+
+std::chrono::time_point<std::chrono::steady_clock> g_bizzare_launch_time;
 
 class Args {
 
@@ -54,6 +66,9 @@ class Args {
 
 int main(int argc, char* argv[]) {
 
+    g_bizzare_launch_time = std::chrono::steady_clock::now();
+    std::setbuf(stdout, nullptr);
+
     Args args(argc, argv);
 
     if (args.debug_mode) {
@@ -64,7 +79,13 @@ int main(int argc, char* argv[]) {
         show_error("IP address not provided");
     }
 
-    setup_conntrack();
+    setup_conntrack(args.ip_address.c_str());
+    show_info_cpp("Listening to " << args.ip_address << " ...");
+    std::thread network_thread(network_listen);
+
+    std::signal(SIGINT, sigint_handler);
+
+    network_thread.join();
 
     return 0;
 }
