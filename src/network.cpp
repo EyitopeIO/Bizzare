@@ -16,9 +16,14 @@ uint64_t g_rx_bytes = 0;
 
 int bizzare_nf_cb(enum nf_conntrack_msg_type type, struct nf_conntrack* ct, void* data) {
 
+#if DEBUG
+    char buf[1024];
+    nfct_snprintf(buf, sizeof(buf), ct, type, NFCT_O_PLAIN, NFCT_OF_TIME);
+    std::printf("%s\n", buf);
+#endif
+
     uint8_t proto = nfct_get_attr_u8(ct,  ATTR_ORIG_L3PROTO);
     if (type == NFCT_T_DESTROY || type == NFCT_T_ERROR) {
-        show_info("Ignoring event...");
         return NFCT_CB_CONTINUE;
     }
 
@@ -52,7 +57,6 @@ int bizzare_nf_cb(enum nf_conntrack_msg_type type, struct nf_conntrack* ct, void
         }
     }
 
-    show_info_cpp("trx=" << g_rx_bytes << ", ttx=" << g_tx_bytes);
     return NFCT_CB_CONTINUE;
 }
 
@@ -61,7 +65,7 @@ void setup_conntrack(const char* const ip_address) {
     std::fstream nf_acct_var(NF_ACCT_VARIABLE);
     if (nf_acct_var.is_open()) {
         if (nf_acct_var.get() == '0') {
-            show_info("Enabling conntrack accounting");
+            show_info_cpp("Enabled conntrack accounting");
             nf_acct_var << "1";
         }
     } else {

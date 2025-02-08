@@ -14,7 +14,7 @@ static void show_help(void)
     std::cout << "Options:" << std::endl;
     std::cout << "  -d      Enable debug mode" << std::endl;
     std::cout << "  -h      Display this help and exit" << std::endl;
-    std::cout << "  -m      Device MAC address" << std::endl;
+    std::cout << "  -a      Device IP address" << std::endl;
     std::exit(EXIT_FAILURE);
 }
 
