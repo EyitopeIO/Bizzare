@@ -7,6 +7,8 @@
 #include <ctime>
 #include <chrono>
 
+#define BIZZARE_NF_QUERRY_INTERVAL 86400000
+
 #ifdef _cplusplus
 extern "C" {
 #endif
@@ -51,5 +53,16 @@ extern std::chrono::time_point<std::chrono::steady_clock> g_bizzare_launch_time;
     std::cerr << "\033[1;31m[" << time_now_ms << "]" << " " << message << "\033[0m\n"; \
     std::exit(EXIT_FAILURE); \
 } while(0);
+
+
+class Args {
+    public:
+        std::string ip_address;
+        uint32_t poll_interval;
+        bool debug_mode;
+        void parse(int argc, char* argv[]);
+};
+
+extern Args g_args;
 
 #endif
