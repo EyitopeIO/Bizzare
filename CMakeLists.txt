@@ -13,3 +13,5 @@ else()
   target_compile_options(bizzare PUBLIC -O3 -Werror)
 endif()
 target_link_libraries(bizzare netfilter_conntrack)
+
+install(TARGETS bizzare DESTINATION /usr/bin)
