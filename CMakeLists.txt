@@ -12,6 +12,6 @@ if(DEFINED ENV{DEBUG})
 else()
   target_compile_options(bizzare PUBLIC -O3 -Werror)
 endif()
-target_link_libraries(bizzare netfilter_conntrack)
+target_link_libraries(bizzare netfilter_conntrack sqlite3)
 
 install(TARGETS bizzare DESTINATION /usr/bin)

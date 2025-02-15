@@ -5,6 +5,7 @@
 #include <csignal>
 #include "helpers.h"
 #include "network.h"
+#include "database.h"
 
 
 extern struct nfct_handle *g_handle;
@@ -41,6 +42,8 @@ int main(int argc, char* argv[]) {
         g_args.poll_interval = BIZZARE_NF_QUERRY_INTERVAL_MAX;
         show_warning_cpp("Polling interval capped at " << BIZZARE_NF_QUERRY_INTERVAL_MAX << " milliseconds");
     }
+
+    db_setup();
 
     setup_conntrack(g_args.ip_address.c_str());
     show_info_cpp("Listening to " << g_args.ip_address << " ...");

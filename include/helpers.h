@@ -36,6 +36,12 @@ extern std::chrono::time_point<std::chrono::steady_clock> g_bizzare_launch_time;
     return ret; \
 }()
 
+#define unix_time_stamp [](void) { \
+    auto now = std::chrono::system_clock::now(); \
+    auto since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count(); \
+    return since_epoch; \
+}()
+
 #define show_warning_cpp(message) do \
 { \
     std::cerr << "\033[1;33m[" << time_now_ms << "]" << " " << message << "\033[0m\n"; \
