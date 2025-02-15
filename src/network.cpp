@@ -44,10 +44,11 @@ int bizzare_nf_cb(enum nf_conntrack_msg_type type, struct nf_conntrack* ct, void
     }
 
     static uint32_t ip = htonl(inet_addr(g_args.ip_address.c_str()));
+    static uint32_t nat_ip = htonl(inet_addr(g_args.nat_ip_address.c_str()));
+
     uint32_t orig = htonl(nfct_get_attr_u32(ct, ATTR_ORIG_IPV4_SRC));
-    /* TODO: I need to check the IP after NAT, not original SRC */
     uint32_t repl = htonl(nfct_get_attr_u32(ct, ATTR_REPL_IPV4_DST));
-    if (orig != ip && repl != ip) {
+    if (orig != ip && repl != nat_ip) {
         return NFCT_CB_CONTINUE;
     }
 

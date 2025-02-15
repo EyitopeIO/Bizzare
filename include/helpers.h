@@ -62,6 +62,7 @@ extern std::chrono::time_point<std::chrono::steady_clock> g_bizzare_launch_time;
 class Args {
     public:
         std::string ip_address;
+        std::string nat_ip_address;
         uint32_t poll_interval;
         bool debug_mode;
         Args(void);

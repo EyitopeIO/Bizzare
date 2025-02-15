@@ -36,6 +36,11 @@ int main(int argc, char* argv[]) {
         show_error("IP address not provided");
     }
 
+    if (g_args.nat_ip_address.empty()) {
+        g_args.nat_ip_address = g_args.ip_address;
+        show_info("No NAT IP address provided");
+    }
+
     if (!g_args.poll_interval) {
         g_args.poll_interval = BIZZARE_NF_QUERRY_INTERVAL_MS;
     } else if (g_args.poll_interval > BIZZARE_NF_QUERRY_INTERVAL_MAX) {

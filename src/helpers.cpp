@@ -28,6 +28,7 @@ static void show_help(void)
     std::cout << "  -d      Enable debug mode" << std::endl;
     std::cout << "  -h      Display this help and exit" << std::endl;
     std::cout << "  -a      Device IP address" << std::endl;
+    std::cout << "  -b      Next hop NAT-ed address" << std::endl;
     std::cout << "  -t      Polling interval in milliseconds" << std::endl;
 }
 
@@ -38,7 +39,7 @@ Args::Args(void) {
 
 void Args::parse(int argc, char* argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv, "a:t:dh")) != -1) {
+    while ((opt = getopt(argc, argv, "a:t:b:dh")) != -1) {
         switch(opt) {
             case 'd':
                 debug_mode = true;
@@ -51,6 +52,10 @@ void Args::parse(int argc, char* argv[]) {
 
             case 'a':
                 ip_address = optarg;
+                break;
+
+            case 'b':
+                nat_ip_address = optarg;
                 break;
 
             case 't':
