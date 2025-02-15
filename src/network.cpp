@@ -142,6 +142,13 @@ void network_listen(void) {
 
         total_querries++;
 
+        if (g_tx_bytes || g_rx_bytes) {
+            db_save( unix_time_stamp, duration,
+                g_rx_bytes / (1024.0 * 1024.0),
+                g_tx_bytes / (1024.0 * 1024.0)
+            );
+        }
+
         if (g_args.debug_mode) {
             show_info_cpp( \
                 std::endl \
