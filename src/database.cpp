@@ -30,7 +30,7 @@ void db_setup(void)
     }
 }
 
-void db_save(uint64_t timestamp, uint64_t duration_ms, float rx_mb, float tx_mb)
+void db_save(uint64_t timestamp, uint32_t duration_ms, float rx_mb, float tx_mb)
 {
     std::string insert_query = "INSERT INTO network_usage (timestamp, duration_ms, rx_mb, tx_mb) VALUES (";
     insert_query += std::to_string(timestamp) + ", ";

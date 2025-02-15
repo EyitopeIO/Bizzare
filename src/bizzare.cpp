@@ -14,7 +14,7 @@ extern bool g_network_loop_conitnue;
 static void sigint_handler(int sig) {
     show_info("Shutting down");
     nfct_close(g_handle);
-    std::exit(EXIT_SUCCESS);
+    g_network_loop_conitnue = false;
 }
 
 std::chrono::time_point<std::chrono::steady_clock> g_bizzare_launch_time;
