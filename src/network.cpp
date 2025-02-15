@@ -43,27 +43,27 @@ int bizzare_nf_cb(enum nf_conntrack_msg_type type, struct nf_conntrack* ct, void
             show_warning_cpp("Unsupported protocol");
             return NFCT_CB_CONTINUE;
     }
-
+    bool show = false;
     static uint32_t ip = htonl(inet_addr(g_args.ip_address.c_str()));
 
     uint64_t tx = nfct_get_attr_u64(ct, ATTR_ORIG_COUNTER_BYTES);
     uint32_t orig = htonl(nfct_get_attr_u32(ct, ATTR_ORIG_IPV4_SRC));
     if (orig == ip) {
-        show_event(type, ct);
+        show = true;
+        show_info_cpp("tx " << tx);
         g_tx_bytes += tx;
-        if (g_args.debug_mode) {
-            show_info_cpp("tx " << tx);
-        }
     }
 
     uint64_t rx = nfct_get_attr_u64(ct, ATTR_REPL_COUNTER_BYTES);
     uint32_t repl = htonl(nfct_get_attr_u32(ct, ATTR_REPL_IPV4_DST));
     if (repl == ip) {
-        show_event(type, ct);
+        show = true;
+        show_info_cpp("rx " << rx);
         g_rx_bytes += rx;
-        if (g_args.debug_mode) {
-            show_info_cpp("rx " << rx);
-        }
+    }
+
+    if (g_args.debug_mode && show) {
+        show_event(type, ct);
     }
 
     return NFCT_CB_CONTINUE;

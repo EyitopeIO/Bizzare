@@ -16,6 +16,7 @@ void show_info(const char* const message)
 void show_error(const char* const message)
 {
     std::fprintf(stderr, "\033[1;31m[!] %s\033[0m\n", message);
+    std::perror(nullptr);
     std::exit(EXIT_FAILURE);
 }
 
