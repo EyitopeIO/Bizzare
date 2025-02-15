@@ -30,6 +30,11 @@ static void show_help(void)
     std::cout << "  -t      Polling interval in milliseconds" << std::endl;
 }
 
+Args::Args(void) {
+    poll_interval = 0;
+    debug_mode = false;
+}
+
 void Args::parse(int argc, char* argv[]) {
     int opt;
     while ((opt = getopt(argc, argv, "a:t:dh")) != -1) {

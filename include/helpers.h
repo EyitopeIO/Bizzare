@@ -7,8 +7,6 @@
 #include <ctime>
 #include <chrono>
 
-#define BIZZARE_NF_QUERRY_INTERVAL 86400000
-
 #ifdef _cplusplus
 extern "C" {
 #endif
@@ -60,6 +58,7 @@ class Args {
         std::string ip_address;
         uint32_t poll_interval;
         bool debug_mode;
+        Args(void);
         void parse(int argc, char* argv[]);
 };
 

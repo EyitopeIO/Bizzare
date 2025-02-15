@@ -3,6 +3,8 @@
 #endif
 
 #include <libnetfilter_conntrack/libnetfilter_conntrack.h>
+#define BIZZARE_NF_QUERRY_INTERVAL_MS 500
+#define BIZZARE_NF_QUERRY_INTERVAL_MAX 86400000
 
 #ifdef _cplusplus
 extern "C" {

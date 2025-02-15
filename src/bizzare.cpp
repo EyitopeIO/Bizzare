@@ -35,9 +35,11 @@ int main(int argc, char* argv[]) {
         show_error("IP address not provided");
     }
 
-    if (g_args.poll_interval > BIZZARE_NF_QUERRY_INTERVAL) {
-        g_args.poll_interval = BIZZARE_NF_QUERRY_INTERVAL;
-        show_warning_cpp("Polling interval capped at " << BIZZARE_NF_QUERRY_INTERVAL << " milliseconds");
+    if (!g_args.poll_interval) {
+        g_args.poll_interval = BIZZARE_NF_QUERRY_INTERVAL_MS;
+    } else if (g_args.poll_interval > BIZZARE_NF_QUERRY_INTERVAL_MAX) {
+        g_args.poll_interval = BIZZARE_NF_QUERRY_INTERVAL_MAX;
+        show_warning_cpp("Polling interval capped at " << BIZZARE_NF_QUERRY_INTERVAL_MAX << " milliseconds");
     }
 
     setup_conntrack(g_args.ip_address.c_str());
