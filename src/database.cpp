@@ -26,7 +26,8 @@ void db_setup(void)
 
     sqlite3_exec(g_db, create_table, nullptr, nullptr, &err_msg);
     if (err_msg) {
-        show_error(err_msg);
+        show_warning(err_msg);
+        sqlite3_free(err_msg);
     }
 }
 
