@@ -2,6 +2,7 @@
 #include <arpa/inet.h>
 #include "network.h"
 #include "helpers.h"
+#include "database.h"
 #include <thread>
 #include <fstream>
 
@@ -92,30 +93,33 @@ void setup_conntrack(const char* const ip_address) {
         show_error("Failed to create nfct filter");
     }
 
-    struct nfct_filter_ipv4 filter_ipv4 = {
+    /* All filter logic is AND-ed together and applies only to the original
+       direction. Documentation and examples do not mention this */
+
+    struct nfct_filter_ipv4 user_ip = {
 		.addr = ntohl(inet_addr(ip_address)),
 		.mask = 0xFFFFFFFF,
 	};
-
     if (nfct_filter_set_logic(g_filter, NFCT_FILTER_SRC_IPV4, NFCT_FILTER_LOGIC_POSITIVE) == -1) {
-        show_error("Failed to set src filter logic");
+        show_error("Could not set user ip filter logic");
     }
+    nfct_filter_add_attr(g_filter, NFCT_FILTER_SRC_IPV4, &user_ip);
 
-    if (nfct_filter_set_logic(g_filter, NFCT_FILTER_DST_IPV4, NFCT_FILTER_LOGIC_POSITIVE) == -1) {
-        show_error("Failed to set dest filter logic");
+    struct nfct_filter_ipv4 no_localhost = {
+        .addr = ntohl(inet_addr("127.0.0.1")),
+        .mask = 0xFFFFFFFF,
+    };
+    if (nfct_filter_set_logic(g_filter, NFCT_FILTER_DST_IPV4, NFCT_FILTER_LOGIC_NEGATIVE) == -1) {
+        show_error("Could not set localhost filter logic");
     }
-    
-	nfct_filter_add_attr(g_filter, NFCT_FILTER_SRC_IPV4, &filter_ipv4);
-
-	if (nfct_filter_attach(nfct_fd(g_handle), g_filter) == -1) {
-		show_error("Failed to attach nfct filter");
-	}
+    nfct_filter_add_attr(g_filter, NFCT_FILTER_DST_IPV4, &no_localhost);
+    if (nfct_filter_attach(nfct_fd(g_handle), g_filter) == -1) {
+        show_error("Could not attach filter to handle");
+    }
 
 	nfct_filter_destroy(g_filter);
 
 	nfct_callback_register(g_handle, NFCT_T_ALL, bizzare_nf_cb, nullptr);
-
-    show_info("Conntrack setup complete");
 }
 
 
@@ -129,7 +133,7 @@ void network_listen(void) {
         g_rx_bytes = 0;
 
         g_request_time = std::chrono::high_resolution_clock::now();
-        ret = nfct_query(g_handle, NFCT_Q_DUMP_FILTER, &family);
+        ret = nfct_query(g_handle, NFCT_Q_DUMP_FILTER, g_filter);
         if (ret == -1) {
             show_warning_cpp("Failed to query conntrack");
         }
