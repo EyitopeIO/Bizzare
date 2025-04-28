@@ -1,5 +1,7 @@
 #include <string>
+#include <cstring>
 #include <arpa/inet.h>
+#include <ifaddrs.h>
 #include "network.h"
 #include "helpers.h"
 #include "database.h"
@@ -128,5 +130,42 @@ void network_listen(void) {
             std::this_thread::sleep_for(std::chrono::milliseconds(g_args.poll_interval - duration));
         }
     }
+}
+
+int get_ipv4_address(std::string& ip_address) {
+    struct ifaddrs *cursor, *p_iface_addr = nullptr;
+
+    getifaddrs(&p_iface_addr);
+    if (p_iface_addr == nullptr) {
+        show_error("getifaddrs");
+        return -1;
+    }
+
+    for (cursor = p_iface_addr; cursor != nullptr; cursor = cursor->ifa_next) {
+        if (cursor->ifa_addr == nullptr) {
+            continue;
+        }
+        if (cursor->ifa_addr->sa_family != AF_INET) {
+            continue;
+        }
+        if (!std::strcmp(cursor->ifa_name, "br-lan") ||
+            !std::strcmp(cursor->ifa_name, "lan") ||
+            !std::strcmp(cursor->ifa_name, "br0") ||
+            !std::strcmp(cursor->ifa_name, "br-wlan")) {
+                ip_address = std::string(inet_ntoa(((struct sockaddr_in *)cursor->ifa_addr)->sin_addr));
+                break;
+        } else {
+            if (g_args.debug_mode) {
+                show_info_cpp("Ignoring interface " << cursor->ifa_name);
+            }
+        }
+    }
+
+    freeifaddrs(p_iface_addr);
+
+    if (ip_address.empty()) {
+        return -1;
+    }
+    return 0;
 }
 

@@ -33,7 +33,9 @@ int main(int argc, char* argv[]) {
     }
 
     if (g_args.ip_address.empty()) {
-        show_error("IP address not provided");
+        if (get_ipv4_address(g_args.ip_address) == -1) {
+            show_error("Could not find LAN IP. Please provide it with -a");
+        }
     }
 
     if (g_args.nat_ip_address.empty()) {

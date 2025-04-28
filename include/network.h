@@ -12,6 +12,7 @@ extern "C" {
 
 void setup_conntrack(const char* const ip_address);
 int bizzare_nf_cb(enum nf_conntrack_msg_type type, struct nf_conntrack* ct, void* data);
+int get_ipv4_address(std::string& ip_address);
 
 #ifdef _cplusplus
 }
